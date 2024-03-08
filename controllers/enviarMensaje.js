@@ -1,6 +1,5 @@
-import { enviarMensajeTelegram } from "../helpers/enviarMensajeTelegram";
+import { enviarMensajeTelegram } from "../helpers/enviarMensajeTelegram.js";
 
-const TELEGRAM_CHAT_ID = '5284137080';
 
 export const enviarMensaje = async ( req, res ) => {
     try {
@@ -10,7 +9,7 @@ export const enviarMensaje = async ( req, res ) => {
             throw new Error( 'El mensaje y el número de teléfono son obligatorios' );
         }
 
-        await enviarMensajeTelegram( mensaje, telefono, TELEGRAM_CHAT_ID );
+        await enviarMensajeTelegram( mensaje, telefono);
 
         res.status( 200 ).json({
             success: true,

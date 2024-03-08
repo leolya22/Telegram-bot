@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 
-import { enviarMensaje } from './controllers/enviarMensaje';
+import { enviarMensaje } from './controllers/enviarMensaje.js';
 
 
-const { TELEGRAM_BOT_TOKEN, PORT } = process.env;
+const { PORT } = process.env;
 
 const app = express();
 
