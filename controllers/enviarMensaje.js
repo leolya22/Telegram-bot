@@ -3,23 +3,33 @@ import { enviarMensajeTelegram } from "../helpers/enviarMensajeTelegram.js";
 
 export const enviarMensaje = async ( req, res ) => {
     try {
-        const { mensaje, telefono } = req.body;
+        const { text, chat_id } = req.body;
 
-        if ( !mensaje || !telefono ) {
-            throw new Error( 'El mensaje y el número de teléfono son obligatorios' );
+        if ( !text ) {
+            return res.status( 400 ).json({
+                ok: false,
+                message: 'No se encontro el mensaje para enviar'
+            });
+        }
+        if ( !chat_id ) {
+            return res.status( 400 ).json({
+                ok: false,
+                message: 'El usuario no acepto recibir notificaciones del sitio o no se paso el chat_id'
+            });
         }
 
-        await enviarMensajeTelegram( mensaje, telefono);
+        await enviarMensajeTelegram( text, chat_id );
 
         res.status( 200 ).json({
-            success: true,
-            message: 'Mensaje enviado correctamente'
+            ok: true,
+            message: 'Notificacion enviada correctamente'
         });
     } catch ( error ) {
-        console.error( error );
+
+        console.log( error.response.data );
         res.status( 500 ).json({
-            success: false,
-            error: error.message
+            ok: false,
+            message: error.response.data.description
         });
     }
 }

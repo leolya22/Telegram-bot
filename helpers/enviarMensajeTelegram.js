@@ -1,23 +1,9 @@
-import axios from 'axios';
-import 'dotenv/config';
+import { telegramApi } from '../api/config.js';
 
 
-const { TELEGRAM_BOT_TOKEN } = process.env;
-const TELEGRAM_CHAT_ID = '5284137080';
+export const enviarMensajeTelegram = async( text, chat_id ) => {
 
-export const enviarMensajeTelegram = async( mensaje, telefono ) => {
-
-    //GET `https://api.telegram.org/bot${ TELEGRAM_CHAT_ID }/getUpdates`
-
-    const params = {
-        chat_id: TELEGRAM_CHAT_ID,
-        text: mensaje
-    };
-
-    const telegramApi = axios.create({
-        baseURL: `https://api.telegram.org/bot${ TELEGRAM_BOT_TOKEN }`
-    });
-    const { data } = await telegramApi.post( `/sendMessage`, params );
+    const { data } = await telegramApi.post( `/sendMessage`, { chat_id, text } );
 
     if ( !data.ok ) {
         throw new Error( `Error al enviar el mensaje: ${ data.description }` );

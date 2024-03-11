@@ -3,9 +3,10 @@ import cors from 'cors';
 import 'dotenv/config';
 
 import { enviarMensaje } from './controllers/enviarMensaje.js';
+import { crearBot } from './api/crearBot.js';
 
 
-const { PORT } = process.env;
+crearBot();
 
 const app = express();
 
@@ -13,8 +14,8 @@ app.use( express.static( 'public' ) );
 app.use( cors() );
 app.use( express.json() );
 
-app.post( '/enviar-mensaje', enviarMensaje );
+app.post( '/telegram-bot/enviar-mensaje', enviarMensaje );
 
-app.listen( PORT, () => {
-    console.log( `Servidor corriendo en el puerto ${ PORT }` );
+app.listen( process.env.PORT, () => {
+    console.log( `Servidor corriendo en el puerto ${ process.env.PORT }` );
 });
