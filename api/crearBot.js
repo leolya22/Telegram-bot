@@ -1,5 +1,8 @@
 import TelegramBot from 'node-telegram-bot-api';
 
+import { bdConfig } from '../bd/config';
+
+
 export const crearBot = () => {
     const bot = new TelegramBot( process.env.TELEGRAM_BOT_TOKEN, { polling: true } );
 
@@ -13,6 +16,10 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
+            const connection = await sql.connect( bdConfig );
+            console.log( connection );
+            const result = await sql.query( 'select top 10 * from cuprovcampos' );
+            console.log( result );
             /* TODO: VERIFICAR SI EL CHAT_ID ESTA REGISTRADO EN LA BASE DE DATOS */
             const BD_chat_id = true; // SI EL CHAT_ID ESTA EN LA BD REGRESA true, SINO false
 
@@ -24,30 +31,19 @@ export const crearBot = () => {
                     );
                     await bot.sendMessage(
                         chat_id,
-                        'Me podrias briandar el CUIT(sin guiones, solo numeros) de tu empresa?'
+                        'Me podrias briandar el token de acceso? Lo podes encontrar en el sitio en la parte de ...'
                     );
                 } else {
-                    const cuit = Number( text );
+                    const token = text.trim();
 
-                    if( isNaN( cuit ) ) {
-                        return await bot.sendMessage(
-                            chat_id,
-                            'Por favor ingresar el CUIT sin guiones, espacios o letras, solo numeros. Podes probar de nuevo?'
-                        );
-                    } else {
-                        /* TODO: VALIDAR SI EL CUIT EXISTE EN LA BASE DE DATOS */
-                        /* EN CASO DE QUE EXISTA, PASARLE AL PROVEEDOR LA RAZON SOCIAL Y EL CUIT DE LA BD PARA CONFIRMAR, SI CONFIRMA:
-                        GUARDAR EL CHAT_ID Y EL FLAG 'telegram_notifications' CON EL VALOR 'true' EN LA BD, SINO: 
+                    /* TODO: VALIDAR EL TOKEN */
+                    /* EN CASO DE QUE EXISTA GUARDAR EL CHAT_ID Y EL FLAG 'telegram_notifications'
+                    CON EL VALOR 'true' EN LA BD
+                    /* EN CASO DE QUE NO EXISTA: */
                         await bot.sendMessage(
                             chat_id,
-                            'Por favor mandar el CUIT de nuevo.'
-                        );*/
-                        /* EN CASO DE QUE NO EXISTA: */
-                            await bot.sendMessage(
-                                chat_id,
-                                'El CUIT brindado no existe en nuestra base de datos, podrias revisar si lo escribiste correctamente y probar de nuevo?'
-                            );
-                    }
+                            'El token es incorrecto, por favor probar de nuevo'
+                        );
                 }
             } else {
                 const telegramNotifications = false; /* TODO: REGRESAR EL FLAG 'telegram_notifications' de la BD */
@@ -96,5 +92,6 @@ export const crearBot = () => {
         } catch ( error ) {
             console.log( error.message );
         }
+        sql.close();
     });
 }
