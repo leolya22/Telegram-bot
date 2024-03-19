@@ -15,7 +15,7 @@ connection.on( 'connect', ( err ) => {
     }
     console.log( "Connected" );
     const request = new Request(
-        "select * from facturacustomizacionProv (nolock) where empid='AR3062982706' and provid='AR3070776878'",
+        "select * from facturacustomizacionProv (nolock) where empid='AR3062982706'",
         ( err ) => {
             if ( err ) {
                 console.log( err );
@@ -26,6 +26,7 @@ connection.on( 'connect', ( err ) => {
         columns.forEach( ( column ) => {
             console.log( `${ column.metadata.colName }: ${ column.value }` );
         });
+        console.log('\n');
     });
     connection.execSql( request );
 });
