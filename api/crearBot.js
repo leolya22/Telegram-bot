@@ -14,11 +14,6 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
-            
-            /*const connection = await sql.connect( bdConfig );
-            console.log( connection );
-            const result = await sql.query( 'select top 10 * from cuprovcampos' );
-            console.log( result );*/
             /* TODO: VERIFICAR SI EL CHAT_ID ESTA REGISTRADO EN LA BASE DE DATOS */
             const BD_chat_id = true; // SI EL CHAT_ID ESTA EN LA BD REGRESA true, SINO false
 

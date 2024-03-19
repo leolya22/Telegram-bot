@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import { Connection } from 'tedious';
+import { Connection, Request } from 'tedious';
 
 import { config } from './bd/config.js'
 import { enviarMensaje } from './controllers/enviarMensaje.js';
@@ -13,7 +13,21 @@ connection.on( 'connect', ( err ) => {
     if( err ) {
         return console.log( err );
     }
-    console.log( "Connected" );  
+    console.log( "Connected" );
+    const request = new Request(
+        "select * from facturacustomizacionProv (nolock) where empid='AR3062982706' and provid='AR3070776878'",
+        ( err ) => {
+            if ( err ) {
+                console.log( err );
+            }
+        }
+    );
+    request.on( 'row', ( columns ) => {
+        columns.forEach( ( column ) => {
+            console.log( `${ column.metadata.colName }: ${ column.value }` );
+        });
+    });
+    connection.execSql( request );
 });
 connection.connect();
 

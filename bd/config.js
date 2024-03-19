@@ -10,6 +10,8 @@ export const config = {
         }
     },
     options: {
-        database: DB_NAME
+        encrypt: false,
+        database: DB_NAME,
+        trustServerCertificate: true
     }
 };
