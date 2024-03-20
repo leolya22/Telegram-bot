@@ -1,4 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
+import jwt from 'jsonwebtoken';
+
+import { sqlRequest } from '../helpers/sqlRequest.js';
 
 
 export const crearBot = () => {
@@ -14,8 +17,8 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
-            /* TODO: VERIFICAR SI EL CHAT_ID ESTA REGISTRADO EN LA BASE DE DATOS */
-            const BD_chat_id = true; // SI EL CHAT_ID ESTA EN LA BD REGRESA true, SINO false
+            const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }1'` );
+            let BD_chat_id = results[0] ? true : false;
 
             if( !BD_chat_id ) {
                 if( text === '/start' ) {
@@ -29,15 +32,15 @@ export const crearBot = () => {
                     );
                 } else {
                     const token = text.trim();
-
-                    /* TODO: VALIDAR EL TOKEN */
+                    const { provid, exp } = jwt.verify( token, process.env.JWT_SECRET_WORD );
+                    console.log(provid);
+                    /* PARA VALIDAR LA FECHA : console.log(Date.now());*/
+                    await sqlRequest( `insert into telegram ( chat_id, prov_id, allow_telegram_notif ) Values ( '${ chat_id }', '${ provid }', 'S')` );
                     /* EN CASO DE QUE EXISTA GUARDAR EL CHAT_ID Y EL FLAG 'telegram_notifications'
-                    CON EL VALOR 'true' EN LA BD
+                    CON EL VALOR 'true' EN LA BD */
                     /* EN CASO DE QUE NO EXISTA: */
-                        await bot.sendMessage(
-                            chat_id,
-                            'El token es incorrecto, por favor probar de nuevo'
-                        );
+                        
+                        //if () {}
                 }
             } else {
                 const telegramNotifications = false; /* TODO: REGRESAR EL FLAG 'telegram_notifications' de la BD */
@@ -84,7 +87,18 @@ export const crearBot = () => {
                 }
             }
         } catch ( error ) {
-            console.log( error.message );
+            console.log( "Error: ", error.message );
+            if( error.message == "jwt malformed" ) {
+                await bot.sendMessage( 
+                    chat_id,
+                    'El formato del token es incorrecto, por favor revisar si lo copiaste correctamente'
+                );
+            } else {
+                await bot.sendMessage(
+                    chat_id,
+                    'El token no es valido, por favor probar de nuevo'
+                );
+            }
         }
     });
 }
