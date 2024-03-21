@@ -18,7 +18,7 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
-            const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }1'` );
+            const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
             let BD_chat_id = results[0] ? true : false;
 
             if( !BD_chat_id ) {
@@ -46,12 +46,13 @@ export const crearBot = () => {
                     );
                 }
             } else {
-                const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
                 const telegramNotifications = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
 
                 if( text === '/start' ) {
                     if ( !telegramNotifications ) {
-                        /* TODO: MARCAR EL FLAG 'telegram_notifications' COMO 'true' */
+                        await sqlRequest( 
+                            `update telegram set allow_telegram_notif='S' where chat_id=${ chat_id }`
+                        );
                     }
                     await bot.sendMessage( 
                         chat_id,
@@ -61,7 +62,9 @@ export const crearBot = () => {
                     );
                 } else if ( text === '/end' ) {
                     if ( telegramNotifications ) {
-                        /* TODO: MARCAR EL FLAG 'telegram_notifications' COMO 'false' */
+                        await sqlRequest( 
+                            `update telegram set allow_telegram_notif='N' where chat_id=${ chat_id }`
+                        );
                     }
                     await bot.sendMessage(
                         chat_id,
