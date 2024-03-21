@@ -10,7 +10,8 @@ export const crearBot = () => {
     bot.setMyCommands([
         { command: '/start', description: 'Activar las notificaciones de E-buyPlace' },
         { command: '/end', description: 'Desactivar las notificaciones de E-buyPlace' },
-        { command: '/cuit', description: 'Borrar el CUIT activo' }
+        { command: '/vincular', description: 'Vincular una nueva empresa' },
+        { command: '/desvincular', description: 'Desvincular uno de los CUITs asociados'}
     ]);
     bot.on( 'message', async ( message ) => {
         const text = message.text;
@@ -32,18 +33,22 @@ export const crearBot = () => {
                     );
                 } else {
                     const token = text.trim();
-                    const { provid, exp } = jwt.verify( token, process.env.JWT_SECRET_WORD );
-                    console.log(provid);
-                    /* PARA VALIDAR LA FECHA : console.log(Date.now());*/
-                    await sqlRequest( `insert into telegram ( chat_id, prov_id, allow_telegram_notif ) Values ( '${ chat_id }', '${ provid }', 'S')` );
-                    /* EN CASO DE QUE EXISTA GUARDAR EL CHAT_ID Y EL FLAG 'telegram_notifications'
-                    CON EL VALOR 'true' EN LA BD */
-                    /* EN CASO DE QUE NO EXISTA: */
-                        
-                        //if () {}
+                    const { provid } = jwt.verify( token, process.env.JWT_SECRET_WORD );
+                    await sqlRequest( 
+                        `insert into telegram ( chat_id, prov_id, allow_telegram_notif ) 
+                        Values ( '${ chat_id }', '${ provid }', 'S')` 
+                    );
+                    await bot.sendMessage( 
+                        chat_id,
+                        'Las notificaciones de E-buyplace estan activadas.\n\n' +
+                        'Para desactivarlas es necesario correr el comando /end\n\n' +
+                        'Para desvincular uno de los cuit podes correr el comando /desvincular'
+                    );
                 }
             } else {
-                const telegramNotifications = false; /* TODO: REGRESAR EL FLAG 'telegram_notifications' de la BD */
+                const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
+                const telegramNotifications = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
+
                 if( text === '/start' ) {
                     if ( !telegramNotifications ) {
                         /* TODO: MARCAR EL FLAG 'telegram_notifications' COMO 'true' */
@@ -51,7 +56,8 @@ export const crearBot = () => {
                     await bot.sendMessage( 
                         chat_id,
                         'Las notificaciones de E-buyplace estan activadas.\n\n' +
-                        'Para desactivarlas es necesario correr el comando /end'
+                        'Para desactivarlas es necesario correr el comando /end\n\n' +
+                        'Para desvincular uno de los cuit podes correr el comando /desvincular'
                     );
                 } else if ( text === '/end' ) {
                     if ( telegramNotifications ) {
@@ -60,9 +66,10 @@ export const crearBot = () => {
                     await bot.sendMessage(
                         chat_id,
                         'Las notificaciones de E-buyplace estan desactivadas.\n\n' +
-                        'Para activarlas de nuevo es necesario correr el comando /start'
+                        'Para activarlas de nuevo es necesario correr el comando /start\n\n' +
+                        'Para desvincular uno de los cuit podes correr el comando /desvincular'
                     );
-                } else if ( text === '/cuit' ) {
+                } else if ( text === '/vincular' ) {
                     /* TODO: CONFIRMAR SI REALMENTE QUIERE CAMBIAR EL CUIT, PASARLE EL CUIT Y LA RAZON SOCIAL */
                     /* SI CONFIRMA: BORRAR EL VALOR DEL CHAT_ID EN LA BASE DE DATOS Y :*/
                         await bot.sendMessage(
@@ -92,6 +99,11 @@ export const crearBot = () => {
                 await bot.sendMessage( 
                     chat_id,
                     'El formato del token es incorrecto, por favor revisar si lo copiaste correctamente'
+                );
+            } else if ( error.message == "jwt expired" ) {
+                await bot.sendMessage( 
+                    chat_id,
+                    'El token expiro, por favor solicitar uno nuevo desde el sitio'
                 );
             } else {
                 await bot.sendMessage(
