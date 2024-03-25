@@ -31,24 +31,14 @@ export async function recibirToken( text, chat_id, bot ) {
         }
         return true;
     } catch ( error ) {
-        console.log( "Error: ", error.message );
-        
-        if( error.message == "jwt malformed" ) {
-            await bot.sendMessage( 
-                chat_id,
-                'El formato del token es incorrecto, por favor revisar si lo copiaste correctamente'
-            );
-        } else if ( error.message == "jwt expired" ) {
-            await bot.sendMessage( 
-                chat_id,
-                'El token expiro, por favor solicitar uno nuevo desde el sitio'
-            );
-        } else {
-            await bot.sendMessage(
-                chat_id,
-                'El token no es valido, por favor probar de nuevo'
-            );
-        }
+        await bot.sendMessage( 
+            chat_id,
+            ( error.message == "jwt malformed" ) 
+                ? 'El formato del token es incorrecto, por favor revisar si lo copiaste correctamente'
+                : ( error.message == "jwt expired" ) 
+                    ? 'El token expiro, por favor solicitar uno nuevo desde el sitio'
+                    : 'El token no es valido, por favor probar de nuevo'
+        );
         return false;
     }
 }
