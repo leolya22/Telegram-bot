@@ -3,6 +3,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { sqlRequest } from '../helpers/sqlRequest.js';
 import { recibirToken } from '../helpers/recibirToken.js';
 import { desvincularEmpresa } from '../helpers/desvincularEmpresa.js';
+import { configurarNotificaciones } from '../helpers/configurarNotificaciones.js';
 
 
 export const crearBot = () => {
@@ -14,7 +15,12 @@ export const crearBot = () => {
 
         try {
             const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
-            let BD_chat_id = results[0] ? true : false;
+            const BD_chat_id = results[0] ? true : false;
+            const telegramNotifications = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
+            let empresasVinculadas = '';
+            results.forEach( ( result, index ) => {
+                empresasVinculadas += `${ index + 1 }. ${ result.prov_id }\n`
+            })
 
             if( !BD_chat_id ) {
                 if( text === '/start' ) {
@@ -22,37 +28,17 @@ export const crearBot = () => {
                         chat_id,
                         'Bienvenido/a al bot de E-buyplace en Telegram. ' +
                         'Aca te vamos a enviar las notificaciones del sitio!\n' +
-                        'Me podrias briandar el token para vincular tu empresa? Lo podes encontrar en el sitio en la parte de ...'
+                        'Me podrias briandar el token para vincular tu empresa? ' +
+                        'Lo podes encontrar en el sitio en la parte de ...'
                     );
                 } else {
                     recibirToken( text, chat_id, bot );
                 }
             } else {
-                const telegramNotifications = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
-
-                if( text === '/start' ) {
-                    if ( !telegramNotifications ) {
-                        await sqlRequest( 
-                            `update telegram set allow_telegram_notif='S' where chat_id=${ chat_id }`
-                        );
-                    }
-                    await bot.sendMessage( 
-                        chat_id,
-                        'Las notificaciones de E-buyplace estan activadas.\n\n' +
-                        'Para desactivarlas es necesario correr el comando /end'
-                    );
-                } else if ( text === '/end' ) {
-                    if ( telegramNotifications ) {
-                        await sqlRequest( 
-                            `update telegram set allow_telegram_notif='N' where chat_id=${ chat_id }`
-                        );
-                    }
-                    await bot.sendMessage(
-                        chat_id,
-                        'Las notificaciones de E-buyplace estan desactivadas.\n\n' +
-                        'Para activarlas de nuevo es necesario correr el comando /start'
-                    );
-                } else if ( text === '/vincular' ) {
+                if( text == '/start' || text == '/end' ) { 
+                    configurarNotificaciones( text, telegramNotifications, bot, chat_id );
+                } 
+                else if ( text === '/vincular' ) {
                     await bot.sendMessage(
                         chat_id,
                         'Me podrias briandar el token de acceso de la empresa que queres vincular?'
@@ -69,11 +55,8 @@ export const crearBot = () => {
                         }
                         bot.on( 'message', messageListener );
                     });
-                } else if ( text === '/desvincular' ) {
-                    let empresasVinculadas = '';
-                    results.forEach( ( result, index ) => {
-                        empresasVinculadas += `${ index + 1 }. ${ result.prov_id }\n`
-                    })
+                } 
+                else if ( text === '/desvincular' ) {
                     await bot.sendMessage(
                         chat_id,
                         'Por favor ingrese el numero de la empresa que quiere desvincular: \n\n' + 
@@ -88,14 +71,16 @@ export const crearBot = () => {
                     } catch ( error ) {
                         console.log( error.message );
                     }
-                } else {
+                }
+                else {
                     await bot.sendMessage( 
                         chat_id,
                         'Este es un bot que envia solamente las notificaciones del sitio.\n' +
-                        'Cualquier duda que tengas contactate por chat en el sitio(burbuja naranja) o a la casilla helpdesk@e-buyplace.com \n\n' +
-                        'Para desactivar las notificaciones es necesario correr el comando /end\n' +
-                        'Para activarlas - el comando /start\n' +
-                        'Si queres vincular una nueva empresa corre el comando /vincular\n' +
+                        'Cualquier duda que tengas contactate por chat en el sitio(burbuja naranja)' +
+                        ' o a la casilla helpdesk@e-buyplace.com \n\n' +
+                        'Para activar las notificaciones es necesario correr el comando /start\n' +
+                        'Para desactivarlas - el comando /end\n' +
+                        'Si queres vincular una nueva empresa correr el comando /vincular\n' +
                         'Para desvincular una de las empresas esta el comando /desvincular'
                     );
                 }
