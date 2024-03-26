@@ -16,7 +16,7 @@ export const crearBot = () => {
         try {
             const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
             const BD_chat_id = results[0] ? true : false;
-            const telegramNotifications = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
+            const telegramNotifications = ( results[0]?.allow_telegram_notif == 'S' ) ? true : false;
             let empresasVinculadas = '';
             results.forEach( ( result, index ) => {
                 empresasVinculadas += `${ index + 1 }. ${ result.prov_id }\n`
