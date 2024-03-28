@@ -1,10 +1,11 @@
-import { sqlRequest } from "./sqlRequest.js";
+import { sqlRequest } from "../../bd/helpers/sqlRequest.js";
 
-export const configurarNotificaciones = async ( text, telegramNotifications, bot, chat_id ) => {
+
+export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id ) => {
     if( text === '/start' ) {
-        if ( !telegramNotifications ) {
+        if ( !allowNotif ) {
             await sqlRequest( 
-                `update telegram set allow_telegram_notif='S' where chat_id=${ chat_id }`
+                `update telegramUsuarios set allow_telegram_notif = 'S' where chat_id = ${ chat_id }`
             );
         } 
         await bot.sendMessage( 
@@ -13,9 +14,9 @@ export const configurarNotificaciones = async ( text, telegramNotifications, bot
             'Para desactivarlas es necesario correr el comando /end'
         );
     } else {
-        if ( telegramNotifications ) {
+        if ( allowNotif ) {
             await sqlRequest( 
-                `update telegram set allow_telegram_notif='N' where chat_id=${ chat_id }`
+                `update telegramUsuarios set allow_telegram_notif = 'N' where chat_id = ${ chat_id }`
             );
         } 
         await bot.sendMessage(

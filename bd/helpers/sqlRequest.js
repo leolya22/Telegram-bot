@@ -1,6 +1,6 @@
 import { Connection, Request } from 'tedious';
 
-import { config } from '../bd/config.js'
+import { config } from '../config.js'
 
 
 export const sqlRequest = ( sqlStatement ) => {

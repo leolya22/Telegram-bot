@@ -1,9 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
 
-import { sqlRequest } from '../helpers/sqlRequest.js';
-import { recibirToken } from '../helpers/recibirToken.js';
-import { desvincularEmpresa } from '../helpers/desvincularEmpresa.js';
-import { configurarNotificaciones } from '../helpers/configurarNotificaciones.js';
+import { desvincularEmpresa } from './helpers/desvincularEmpresa.js';
+import { configurarNotificaciones } from './helpers/configurarNotificaciones.js';
+import { sqlRequest } from '../bd/helpers/sqlRequest.js';
+import { recibirToken } from './helpers/recibirToken.js';
+import { solicitarCodigo } from './helpers/solicitarCodigo.js';
 
 
 export const crearBot = () => {
@@ -14,13 +15,10 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
-            const results = await sqlRequest( `select * from telegram where chat_id='${ chat_id }'` );
+            const results = await sqlRequest(
+                `select * from telegramUsuarios where chat_id = '${ chat_id }'`
+            );
             const BD_chat_id = results[0] ? true : false;
-            const telegramNotifications = ( results[0]?.allow_telegram_notif == 'S' ) ? true : false;
-            let empresasVinculadas = '';
-            results.forEach( ( result, index ) => {
-                empresasVinculadas += `${ index + 1 }. ${ result.prov_id }\n`
-            })
 
             if( !BD_chat_id ) {
                 if( text === '/start' ) {
@@ -29,34 +27,59 @@ export const crearBot = () => {
                         'Bienvenido/a al bot de E-buyplace en Telegram. ' +
                         'Aca te vamos a enviar las notificaciones del sitio!\n' +
                         'Me podrias briandar el token para vincular tu empresa? ' +
-                        'Lo podes encontrar en el sitio en la parte de ...'
+                        'Lo podes encontrar en el mail que te llego, junto al link de telegram!'
                     );
                 } else {
-                    recibirToken( text, chat_id, bot );
+                    const res = await recibirToken( text, chat_id, bot );
+                    if( res ) {
+                        bot.off( 'message', messageListener );
+                        bot.once( 'message', async ( msg ) => {
+                            await solicitarCodigo({ ...res, text: msg.text.trim(), bot });
+                            bot.on( 'message', messageListener );
+                        })
+                    } else {
+                        console.log('rerror');
+                    }
                 }
             } else {
+                const allowNotif = ( results[0].allow_telegram_notif == 'S' ) ? true : false;
+
                 if( text == '/start' || text == '/end' ) { 
-                    configurarNotificaciones( text, telegramNotifications, bot, chat_id );
+                    configurarNotificaciones( text, allowNotif, bot, chat_id );
                 } 
                 else if ( text === '/vincular' ) {
                     await bot.sendMessage(
                         chat_id,
-                        'Me podrias briandar el token de acceso de la empresa que queres vincular?'
+                        'Me podrias briandar el token de acceso(que se envio por mail)' +
+                        ' de la empresa que queres vincular?'
                     );
                     bot.off( 'message', messageListener );
                     bot.once( 'message', async ( msg ) => {
                         const text = msg.text;
                         const res = await recibirToken( text, chat_id, bot );
-                        if( !res ) {
+                        if( res ) {
+                            bot.off( 'message', messageListener );
+                            bot.once( 'message', async ( msg ) => {
+                                await solicitarCodigo({ ...res, text: msg.text.trim(), bot });
+                                bot.on( 'message', messageListener );
+                            })
+                        } else {
                             await bot.sendMessage(
                                 chat_id,
-                                'Por favor si necesita vincular una empresa, correr el comando /vincular de nuevo!'
+                                'Para vincular una empresa se necesita correr el comando /vincular de nuevo!'
                             );
                         }
                         bot.on( 'message', messageListener );
                     });
                 } 
                 else if ( text === '/desvincular' ) {
+                    let empresasVinculadas = '';
+                    // Hacer la peticion para obtener la razon social.
+                    results.forEach( ( result, index ) => {
+                        empresasVinculadas += 
+                        `${ index + 1 }. ${ result.EmpId }( Razon social ) - ${ result.Usuario }\n`
+                    });
+
                     await bot.sendMessage(
                         chat_id,
                         'Por favor ingrese el numero de la empresa que quiere desvincular: \n\n' + 

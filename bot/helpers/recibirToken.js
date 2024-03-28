@@ -1,35 +1,33 @@
 import jwt from 'jsonwebtoken';
 
-import { sqlRequest } from './sqlRequest.js';
+import { sqlRequest } from '../../bd/helpers/sqlRequest.js';
 
 
 export async function recibirToken( text, chat_id, bot ) {
     try {
         const token = text.trim();
-        const { provid } = jwt.verify( token, process.env.JWT_SECRET_WORD );
+        const { Empid, Usuario } = jwt.verify( token, process.env.JWT_SECRET_WORD );
         const result = await sqlRequest( 
-            `select * from telegram where chat_id='${ chat_id }' and prov_id='${ provid }'` 
+            `select * from telegramUsuarios where chat_id = '${ chat_id }' 
+            and EmpId = '${ Empid }' and Usuario = '${ Usuario }'` 
         );
         if ( result[0] ) {
             await bot.sendMessage( 
                 chat_id,
-                'Esta empresa ya esta asociada.'
+                'Este usuario ya esta asociado en este chat.'
             );
         } else {
-            await sqlRequest( 
-                `insert into telegram ( chat_id, prov_id, allow_telegram_notif ) 
-                Values ( '${ chat_id }', '${ provid }', 'S')` 
-            );
             await bot.sendMessage( 
                 chat_id,
-                'La empresa se vinculo correctamente\n\n' +
-                'Las notificaciones de E-buyplace estan activadas.\n' +
-                'Para desactivarlas es necesario correr el comando /end\n' +
-                'Para vincular una empresa mas podes correr el comando /vincular\n' +
-                'Para desvincular una de las empresas esta el comando /desvincular'
+                'Me pasas el codigo de 8 digitos para validar la vinculacion?' +
+                'Lo podes encontrar en el sitio donde solicitaste el envio del mail'
             );
+            return {
+                Empid,
+                Usuario,
+                chat_id
+            }
         }
-        return true;
     } catch ( error ) {
         await bot.sendMessage( 
             chat_id,

@@ -1,4 +1,4 @@
-import { telegramApi } from '../api/config.js';
+import { telegramApi } from '../config.js';
 
 
 export const enviarMensajeTelegram = async( text, chat_id ) => {
