@@ -53,23 +53,32 @@ export const crearBot = () => {
                         'Me podrias briandar el token de acceso(que se envio por mail)' +
                         ' de la empresa que queres vincular?'
                     );
+                    let token, esDobleFactor;
                     bot.off( 'message', messageListener );
                     bot.once( 'message', async ( msg ) => {
                         const text = msg.text;
-                        const res = await recibirToken( text, chat_id, bot );
-                        if( res ) {
-                            bot.off( 'message', messageListener );
-                            bot.once( 'message', async ( msg ) => {
-                                await solicitarCodigo({ ...res, text: msg.text.trim(), bot });
-                                bot.on( 'message', messageListener );
-                            })
-                        } else {
+                        token = await recibirToken( text, chat_id, bot );
+                        if( !token ) {
                             await bot.sendMessage(
                                 chat_id,
                                 'Para vincular una empresa se necesita correr el comando /vincular de nuevo!'
                             );
                         }
-                        bot.on( 'message', messageListener );
+                        if( token ) {
+                            bot.off( 'message', messageListener );
+                            bot.once( 'message', async ( msg ) => {
+                                esDobleFactor = await solicitarCodigo({ ...token, text: msg.text.trim(), bot });
+                                if( !esDobleFactor ) {
+                                    await bot.sendMessage(
+                                        chat_id,
+                                        'Para vincular una empresa se necesita correr el comando /vincular de nuevo!'
+                                    );
+                                };
+                                bot.on( 'message', messageListener );
+                            });
+                        } else {
+                            bot.on( 'message', messageListener );
+                        }
                     });
                 } 
                 else if ( text === '/desvincular' ) {

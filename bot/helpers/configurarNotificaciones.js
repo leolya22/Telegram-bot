@@ -5,7 +5,7 @@ export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id )
     if( text === '/start' ) {
         if ( !allowNotif ) {
             await sqlRequest( 
-                `update telegramUsuarios set allow_telegram_notif = 'S' where chat_id = ${ chat_id }`
+                `update telegramUsuarios set allow_telegram_notif = 'S' where chat_id = '${ chat_id }'`
             );
         } 
         await bot.sendMessage( 
@@ -15,8 +15,9 @@ export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id )
         );
     } else {
         if ( allowNotif ) {
+            console.log(chat_id);
             await sqlRequest( 
-                `update telegramUsuarios set allow_telegram_notif = 'N' where chat_id = ${ chat_id }`
+                `update telegramUsuarios set allow_telegram_notif = 'N' where chat_id = '${ chat_id }'`
             );
         } 
         await bot.sendMessage(
