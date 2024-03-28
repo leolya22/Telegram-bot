@@ -32,10 +32,10 @@ export async function recibirToken( text, chat_id, bot ) {
         await bot.sendMessage( 
             chat_id,
             ( error.message == "jwt malformed" ) 
-                ? 'El formato del token es incorrecto, por favor revisar si lo copiaste correctamente'
+                ? 'El formato del token es incorrecto, revisar si lo copiaste correctamente'
                 : ( error.message == "jwt expired" ) 
-                    ? 'El token expiro, por favor solicitar uno nuevo desde el sitio'
-                    : 'El token no es valido, por favor probar de nuevo'
+                    ? 'El token expiro, solicitar uno nuevo desde el sitio'
+                    : 'El token no es valido'
         );
         return false;
     }

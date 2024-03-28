@@ -38,7 +38,10 @@ export const crearBot = () => {
                             bot.on( 'message', messageListener );
                         })
                     } else {
-                        console.log('rerror');
+                        await bot.sendMessage( 
+                            chat_id,
+                            'Ingresar el token nuevamente'
+                        );
                     }
                 }
             } else {
