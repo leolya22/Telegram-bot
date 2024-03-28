@@ -4,12 +4,14 @@ import { sqlRequest } from "../../bd/helpers/sqlRequest.js";
 export const solicitarCodigo = async ({ Empid, Usuario, chat_id, text, bot }) => {
     try {
         const result = await sqlRequest( 
-            `select * from telegramUsuarios where EmpId = '${ Empid }' and Usuario = '${ Usuario }'` 
+            `select * from telegramUsuarios where chat_id='' and 
+            EmpId = '${ Empid }' and Usuario = '${ Usuario }'` 
         );
         if( text == result[0].codigo_doble_factor ) {
             await sqlRequest( 
-                `update telegramUsuarios set chat_id = '${ chat_id }', allow_telegram_notif = 'S'
-                where EmpId = '${ Empid }' and Usuario = '${ Usuario }'`
+                `update telegramUsuarios set chat_id = '${ chat_id }', 
+                allow_telegram_notif = 'S' where EmpId = '${ Empid }' 
+                and Usuario = '${ Usuario }' and codigo_doble_factor = '${ text }'`
             );
             await bot.sendMessage( 
                 chat_id,

@@ -34,7 +34,17 @@ export const crearBot = () => {
                     if( res ) {
                         bot.off( 'message', messageListener );
                         bot.once( 'message', async ( msg ) => {
-                            await solicitarCodigo({ ...res, text: msg.text.trim(), bot });
+                            const vinculacionExitosa = await solicitarCodigo({ 
+                                ...res,
+                                text: msg.text.trim(),
+                                bot
+                            });
+                            if( !vinculacionExitosa ) {
+                                await bot.sendMessage( 
+                                    chat_id,
+                                    'Ingresar el token nuevamente'
+                                );
+                            }
                             bot.on( 'message', messageListener );
                         })
                     } else {

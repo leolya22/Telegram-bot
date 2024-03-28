@@ -11,14 +11,14 @@ export const crearTokenJWT = async ( req, res = response ) => {
 
     const token = await generarJWT( Empid, Usuario );
     const dobleFactor = generarDobleFactor();
-    //Validar EmpId y obtener la razon social
+    //Validar EmpId y obtener la razon social en UsuariosMaestros
     const results = await sqlRequest( 
-        `select * from telegramUsuarios where EmpId = '${ Empid }' and Usuario = '${ Usuario }'`
+        `select * from telegramUsuarios where EmpId = '${ Empid }' and Usuario = '${ Usuario }' and chat_id = ''`
     );
     if( results[ 0 ] ) {
         await sqlRequest( 
             `update telegramUsuarios set codigo_doble_factor = '${ dobleFactor }' 
-            where EmpId = '${ Empid }' and Usuario = '${ Usuario }'`
+            where EmpId = '${ Empid }' and Usuario = '${ Usuario }' and chat_id = ''`
         );
     } else {
         await sqlRequest( 

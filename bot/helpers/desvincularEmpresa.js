@@ -6,7 +6,7 @@ export const desvincularEmpresa = async ( msg, chat_id, results, bot ) => {
         const empresa = results[ indexEmpresa ];
         if( !isNaN( indexEmpresa ) && empresa != undefined ) {
             await sqlRequest( 
-                `delete from telegramUsuarios where chat_id = ${ chat_id } 
+                `delete from telegramUsuarios where chat_id = '${ chat_id }'
                 and EmpId = '${ empresa.EmpId }' and Usuario = '${ empresa.Usuario }'`
             );
             await bot.sendMessage(
