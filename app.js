@@ -28,7 +28,7 @@ app.post(
 app.post(
     '/telegram-bot/token-jwt',
     [
-        check( 'Empid', 'El empid es necesario para crear el token' ).notEmpty(),
+        check( 'EmpId', 'El empid es necesario para crear el token' ).notEmpty(),
         check( 'Usuario', 'El usuario es necesario para crear el token' ).notEmpty(),
         validarCampos
     ],

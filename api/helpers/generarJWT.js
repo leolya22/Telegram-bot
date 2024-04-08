@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
 
 
-export const generarJWT = ( Empid, Usuario ) => {
+export const generarJWT = ( EmpId, Usuario ) => {
     const secretJWT = process.env.JWT_SECRET_WORD;
 
     return new Promise(( resolve, reject ) => {
 
-        const payload = { Empid, Usuario };
+        const payload = { EmpId, Usuario };
         
         jwt.sign( payload, secretJWT, {
             expiresIn: '30m'

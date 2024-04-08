@@ -1,12 +1,10 @@
-import { sqlRequest } from "../../bd/helpers/sqlRequest.js";
+import { allowNotifications, blockNotifications } from "../../bd/bdRequests.js";
 
 
 export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id ) => {
     if( text === '/start' ) {
         if ( !allowNotif ) {
-            await sqlRequest( 
-                `update telegramUsuarios set allow_telegram_notif = 'S' where chat_id = '${ chat_id }'`
-            );
+            await allowNotifications( chat_id );
         } 
         await bot.sendMessage( 
             chat_id,
@@ -15,9 +13,7 @@ export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id )
         );
     } else {
         if ( allowNotif ) {
-            await sqlRequest( 
-                `update telegramUsuarios set allow_telegram_notif = 'N' where chat_id = '${ chat_id }'`
-            );
+            await blockNotifications( chat_id );
         } 
         await bot.sendMessage(
             chat_id,

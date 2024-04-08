@@ -1,14 +1,11 @@
-import { sqlRequest } from "../../bd/helpers/sqlRequest.js";
+import { deleteByChatIdAndEmp } from "../../bd/bdRequests.js";
 
 export const desvincularEmpresa = async ( msg, chat_id, results, bot ) => {
     try {
         const indexEmpresa = Number( msg.text.trim() ) - 1;
         const empresa = results[ indexEmpresa ];
         if( !isNaN( indexEmpresa ) && empresa != undefined ) {
-            await sqlRequest( 
-                `delete from telegramUsuarios where chat_id = '${ chat_id }'
-                and EmpId = '${ empresa.EmpId }' and Usuario = '${ empresa.Usuario }'`
-            );
+            await deleteByChatIdAndEmp( chat_id, empresa );
             await bot.sendMessage(
                 chat_id,
                 'La empresa fue desvinculada correctamente.'

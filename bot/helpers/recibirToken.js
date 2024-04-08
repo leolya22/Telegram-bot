@@ -1,16 +1,14 @@
 import jwt from 'jsonwebtoken';
 
-import { sqlRequest } from '../../bd/helpers/sqlRequest.js';
+import { selectByEmpAndChatId } from '../../bd/bdRequests.js';
 
 
 export async function recibirToken( text, chat_id, bot ) {
     try {
         const token = text.trim();
-        const { Empid, Usuario } = jwt.verify( token, process.env.JWT_SECRET_WORD );
-        const result = await sqlRequest( 
-            `select * from telegramUsuarios where chat_id = '${ chat_id }' 
-            and EmpId = '${ Empid }' and Usuario = '${ Usuario }'` 
-        );
+        const { EmpId, Usuario } = jwt.verify( token, process.env.JWT_SECRET_WORD );
+        
+        const result = await selectByEmpAndChatId( EmpId, Usuario, chat_id );
         if ( result[0] ) {
             await bot.sendMessage( 
                 chat_id,
@@ -23,7 +21,7 @@ export async function recibirToken( text, chat_id, bot ) {
                 'Lo podes encontrar en el sitio donde solicitaste el envio del mail'
             );
             return {
-                Empid,
+                EmpId,
                 Usuario,
                 chat_id
             }

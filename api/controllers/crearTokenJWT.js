@@ -2,34 +2,26 @@ import { response } from "express";
 
 import { generarJWT } from "../helpers/generarJWT.js";
 import { generarDobleFactor } from "../helpers/generarDobleFactor.js";
-import { sqlRequest } from "../../bd/helpers/sqlRequest.js";
+import { insertEmp, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
 
 
 export const crearTokenJWT = async ( req, res = response ) => {
-    const Empid = req.body.Empid;
+    const EmpId = req.body.EmpId;
     const Usuario = req.body.Usuario;
 
-    const token = await generarJWT( Empid, Usuario );
+    const token = await generarJWT( EmpId, Usuario );
     const dobleFactor = generarDobleFactor();
-    //Validar EmpId y obtener la razon social en UsuariosMaestros
-    const results = await sqlRequest( 
-        `select * from telegramUsuarios where EmpId = '${ Empid }' and Usuario = '${ Usuario }' and chat_id = ''`
-    );
+    
+    const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
     if( results[ 0 ] ) {
-        await sqlRequest( 
-            `update telegramUsuarios set codigo_doble_factor = '${ dobleFactor }' 
-            where EmpId = '${ Empid }' and Usuario = '${ Usuario }' and chat_id = ''`
-        );
+        await updateJWTandDobleFactor( dobleFactor, EmpId, Usuario );
     } else {
-        await sqlRequest( 
-            `insert into telegramUsuarios ( EmpId, Usuario, chat_id, allow_telegram_notif, codigo_doble_factor )
-            Values ( '${ Empid }', '${ Usuario }', '', 'N', '${ dobleFactor }' )`
-        );    
+        await insertEmp( dobleFactor, EmpId, Usuario );
     }
     
     res.json({
         ok: true,
-        Empid,
+        EmpId,
         Usuario,
         token
     })

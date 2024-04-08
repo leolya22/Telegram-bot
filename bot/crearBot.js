@@ -2,9 +2,9 @@ import TelegramBot from 'node-telegram-bot-api';
 
 import { desvincularEmpresa } from './helpers/desvincularEmpresa.js';
 import { configurarNotificaciones } from './helpers/configurarNotificaciones.js';
-import { sqlRequest } from '../bd/helpers/sqlRequest.js';
 import { recibirToken } from './helpers/recibirToken.js';
 import { solicitarCodigo } from './helpers/solicitarCodigo.js';
+import { selectAllByChatId, obtenerRazonSocial } from '../bd/bdRequests.js';
 
 
 export const crearBot = () => {
@@ -15,9 +15,7 @@ export const crearBot = () => {
         const chat_id = message.chat.id;
 
         try {
-            const results = await sqlRequest(
-                `select * from telegramUsuarios where chat_id = '${ chat_id }'`
-            );
+            const results = await selectAllByChatId( chat_id );
             const BD_chat_id = results[0] ? true : false;
 
             if( !BD_chat_id ) {
@@ -96,11 +94,14 @@ export const crearBot = () => {
                 } 
                 else if ( text === '/desvincular' ) {
                     let empresasVinculadas = '';
-                    // Hacer la peticion para obtener la razon social.
-                    results.forEach( ( result, index ) => {
+                    for ( const [ index, result ] of results.entries() ) {
+                        const razonSocial = await obtenerRazonSocial( result.EmpId );
                         empresasVinculadas += 
-                        `${ index + 1 }. ${ result.EmpId }( Razon social ) - ${ result.Usuario }\n`
-                    });
+                            `${ index + 1 }. ${ result.EmpId }( ${ razonSocial[ 0 ] 
+                                ? razonSocial[ 0 ].nombre 
+                                : 'No se encontro el nombre de la empresa'
+                            } ) - ${ result.Usuario }\n`;
+                    }
 
                     await bot.sendMessage(
                         chat_id,
