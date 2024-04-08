@@ -7,6 +7,7 @@ import { enviarMensaje } from './api/controllers/enviarMensaje.js';
 import { crearTokenJWT } from './api/controllers/crearTokenJWT.js';
 import { validarCampos } from './api/middlewares/validarCampos.js';
 import { crearBot } from './bot/crearBot.js';
+import { telegramJob } from './bd/telegramJob.js';
 
 
 crearBot();
@@ -34,6 +35,13 @@ app.post(
     ],
     crearTokenJWT 
 );
+
+async function ejecutarJob() {
+    await telegramJob();
+    setTimeout( ejecutarJob, 30000 );
+}
+
+ejecutarJob();
 
 app.listen( process.env.PORT, () => {
     console.log( `Servidor corriendo en el puerto ${ process.env.PORT }` );

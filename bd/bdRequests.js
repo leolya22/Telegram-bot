@@ -60,3 +60,9 @@ export const obtenerRazonSocial = async ( EmpId ) => {
         `select * from UsuarioMaestros (nolock) where usr_id in ('${ EmpId }')`
     )
 }
+
+export const recibirListaPorEnviar = async () => {
+    return await sqlRequest(
+        `select * from  telegram_envios (nolock) where Estado = 'N'`
+    )
+}
