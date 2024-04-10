@@ -66,3 +66,22 @@ export const recibirListaPorEnviar = async () => {
         `select * from  telegram_envios (nolock) where Estado = 'N'`
     )
 }
+
+export const recibirIdCuerpoMail = async ( id ) => {
+    return await sqlRequest(
+        `select * from mailsenvios (nolock) where idMail = '${ id }'`
+    )
+}
+
+export const recibirCuerpoMail = async ( id, EmpId ) => {
+    return await sqlRequest(
+        `select * from MailsCabeceras where idTipo = '${ id }' and UsrId = '${ EmpId }'`
+    )
+}
+
+export const cambiarEstadoMail = async ( idMail, chat_id, estado ) => {
+    return await sqlRequest(
+        `update telegram_envios set Estado = '${ estado }' 
+        where idMail = '${ idMail }' and chat_id = '${ chat_id }'`
+    )
+}
