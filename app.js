@@ -11,11 +11,15 @@ import { telegramJob } from './bd/telegramJob.js';
 
 crearBot();
 
-const app = express();
+async function ejecutarJob() {
+    await telegramJob();
+    setTimeout( ejecutarJob, 30000 );
+}
+ejecutarJob();
 
+const app = express();
 app.use( cors() );
 app.use( express.json() );
-
 
 app.post(
     '/telegram-bot/token-jwt',
@@ -26,13 +30,6 @@ app.post(
     ],
     crearTokenJWT 
 );
-
-async function ejecutarJob() {
-    await telegramJob();
-    setTimeout( ejecutarJob, 30000 );
-}
-
-ejecutarJob();
 
 app.listen( process.env.PORT, () => {
     console.log( `Servidor corriendo en el puerto ${ process.env.PORT }` );
