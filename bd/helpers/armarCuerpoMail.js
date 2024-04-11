@@ -20,7 +20,7 @@ export const armarCuerpoMail = ( subject, body, parametros ) => {
         subject = replaceString( subject, objetivo, parametros[ paramName ].trim() );
         body = replaceString( body, objetivo, parametros[ paramName ].trim() );
     }
-    text = subject + '\n\n' + '&nbsp;' + body;
+    text = subject + '\n\n'  + body;
     text = eliminarEtiquetasHTML( text );
     return text;
 }
