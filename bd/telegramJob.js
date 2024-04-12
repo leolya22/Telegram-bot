@@ -14,25 +14,22 @@ export const telegramJob = async () => {
             const id = await recibirIdCuerpoMail( idMail );
             const { idTipo, idFrom, param1, param2, param3, URL } = id[ 0 ];
 
-            //Puede ser necesario un hardcode, xq esta configurado mal mailsCabeceras
             const mail = await recibirCuerpoMail( idTipo, idFrom );
+            console.log(mail[ 0 ]);
             if( mail[ 0 ] == undefined ) {
-                return await cambiarEstadoMail( idMail, chat_id, 'Bloqueado' );
+                await cambiarEstadoMail( idMail, chat_id, 'I' );
+                continue;
             }
             const { subject, body } = mail[ 0 ];
 
             const text = armarCuerpoMail( subject, body, { param1, param2, param3 } );
             const seEnvioMensaje = await enviarMensajeTelegram( text, chat_id );
-            let estado = seEnvioMensaje ? 'Enviado' : 'Bloqueado';
+            let estado = seEnvioMensaje ? 'F' : 'E';
             
             //hardcode xq no estan configurados los archivos de sql
-            const URL2 = 'C:/Users/agustina/Desktop/Leo/M79830 - TEST - CAPSA.pdf'
+            const URL2 = 'C:/Users/agustina/Desktop/Leo/M79830 - TEST - CAPaSA.pdf'
             if( URL2 != '' && URL2 != null ) {
-                try {
-                    await enviarArchivoTelegram( URL2, chat_id );
-                } catch (error) {
-                    console.log(error);
-                }
+                await enviarArchivoTelegram( URL2, chat_id );
             }
             await cambiarEstadoMail( idMail, chat_id, estado );
         };

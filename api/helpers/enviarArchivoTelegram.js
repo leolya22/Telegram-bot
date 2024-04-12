@@ -1,16 +1,10 @@
-import { telegramApi } from '../config.js';
 import fs from 'fs'
 import path from 'path';
 import FormData from 'form-data';
 
+import { enviarMensajeTelegram } from './enviarMensajeTelegram.js';
+import { telegramApi } from '../config.js';
 
-const enviarMensajePorError = async ( chat_id, text ) => {
-    try {
-        await telegramApi.post( `/sendMessage`, { chat_id, text } );
-    } catch ( error ) {
-        console.log( error );
-    }
-} 
 
 export const enviarArchivoTelegram = async ( filePath, chat_id ) => {
     if( chat_id.length > 0 && filePath.length > 0 ) {
@@ -29,16 +23,19 @@ export const enviarArchivoTelegram = async ( filePath, chat_id ) => {
                     ...formData.getHeaders()
                 }
             });
+            return true;
         } catch ( error ) {
-            await enviarMensajePorError(
-                chat_id, 'No se pudo enviar el archivo,' +
-                ' por favor descargarlo desde el sitio si ya esta disponible'
+            await enviarMensajeTelegram( 
+                'No se pudo enviar el archivo,' +
+                ' por favor descargarlo desde el sitio. Puede ser que aun no este disponible.',
+                chat_id
             )
         }
     } else {
-        await enviarMensajePorError(
-            chat_id, 'No se pudo enviar el archivo,' +
-            ' por favor descargarlo desde el sitio si ya esta disponible'
+        await enviarMensajeTelegram( 
+            'No se pudo enviar el archivo,' +
+            ' por favor descargarlo desde el sitio. Puede ser que aun no este disponible.',
+            chat_id
         )
     }
 }
