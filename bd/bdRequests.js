@@ -61,17 +61,25 @@ export const obtenerRazonSocial = async ( EmpId ) => {
     )
 }
 
+
 export const recibirListaPorEnviar = async () => {
     const resultado = await sqlRequest(
         `select * from telegram_envios (nolock) where Estado = 'N'`
     );
     resultado.forEach( async ( res ) => {
         await sqlRequest(
-            `update telegram_envios set Estado = 'P' where chat_id = '${ res.chat_id }'`
+            `update telegram_envios set Estado = 'P', fhProc = getdate() 
+            where chat_id = '${ res.chat_id }' and idMail='${ res.idMail }'`
         )
     });
 
     return resultado;
+}
+
+export const recibirListaQueNoSeEnvio = async () => {
+    await sqlRequest(
+        `update telegram_envios set Estado = 'N' where Estado = 'P' and DATEDIFF( HOUR, fhProc, GETDATE() ) >= 1;`
+    )
 }
 
 export const marcarListaRecibida = async () => {
@@ -94,14 +102,14 @@ export const recibirCuerpoMail = async ( id, EmpId ) => {
 
 export const cambiarEstadoMail = async ( idMail, chat_id, estado ) => {
     return await sqlRequest(
-        `update telegram_envios set Estado = '${ estado }', fhProc = getdate() 
+        `update telegram_envios set Estado = '${ estado }'
         where idMail = '${ idMail }' and chat_id = '${ chat_id }' `
     )
 }
 
 export const marcarMailConError = async ( idMail, chat_id ) => {
     return await sqlRequest(
-        `update telegram_envios set Estado = 'E', fhProc = getdate() 
+        `update telegram_envios set Estado = 'E'
         where idMail = '${ idMail }' and chat_id = '${ chat_id }'`
     )
 }
