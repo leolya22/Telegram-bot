@@ -12,15 +12,15 @@ function eliminarEtiquetasHTML( text ) {
     return text.replace( regex, '' );
 }
 
-export const armarCuerpoMail = ( subject, body, parametros ) => {
+export const armarCuerpoMail = ( asunto, cuerpo, parametros ) => {
     let text = '';
     for( let i = 1; i <= 3; i++ ) {
         let objetivo = `#VAR${ i }#`;
         let paramName = `param${ i }`;
-        subject = replaceString( subject, objetivo, parametros[ paramName ].trim() );
-        body = replaceString( body, objetivo, parametros[ paramName ].trim() );
+        asunto = replaceString( asunto, objetivo, parametros[ paramName ].trim() );
+        cuerpo = replaceString( cuerpo, objetivo, parametros[ paramName ].trim() );
     }
-    text = subject + '\n\n'  + body;
+    text = asunto + '\n\n'  + cuerpo;
     text = eliminarEtiquetasHTML( text );
     return text;
 }
