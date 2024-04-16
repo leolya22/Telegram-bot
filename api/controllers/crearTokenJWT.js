@@ -11,6 +11,7 @@ export const crearTokenJWT = async ( req, res = response ) => {
 
     const token = await generarJWT( EmpId, Usuario );
     const dobleFactor = generarDobleFactor();
+    await insertarMailConCodigoTelegram( EmpId, Usuario, dobleFactor );
     
     const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
     if( results[ 0 ] ) {

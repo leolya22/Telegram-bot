@@ -1,6 +1,8 @@
 import { sqlRequest } from "./helpers/sqlRequest.js";
 
 
+const { BOT_LINK } = process.env;
+
 export const deleteByChatIdAndEmp = async ( chat_id, empresa ) => {
     await sqlRequest( 
         `delete from telegram_usuarios where chat_id = '${ chat_id }'
@@ -58,6 +60,23 @@ export const selectAllByChatId = async ( chat_id ) => {
 export const obtenerRazonSocial = async ( EmpId ) => {
     return await sqlRequest(
         `select * from UsuarioMaestros (nolock) where usr_id in ('${ EmpId }')`
+    )
+}
+
+export const insertarMailConCodigoTelegram = async ( EmpId, Usuario, dobleFactor ) => {
+    const cuerpoLibre = `<h3>Estimado/a proveedor</h3><br><br><p>
+    Usted solicito vincular su empresa en telegram para recibir las notificaciones de E-BuyPlace a su celular.
+    Ya deberia tener copiado el token que tiene que enviar a nuestro <a href='${ BOT_LINK }'>bot de telegram</a>
+    Para completar la vinculacion va a necesitar el siguiente codigo: <b>${ dobleFactor }</b></p><br><br>
+    <p>Si por algun motivo no se copio el token recomendamos volver al sitio y copiarlo manualmente e ingresarlo
+    en nuestro <a href='${ BOT_LINK }'>bot</a></p>`
+    const asuntoLibre = `Vinculacion de la empresa ${ EmpId } usuario ${ Usuario } en Telegram.`
+
+    await sqlRequest(
+        `INSERT INTO mailsEnvios (idFrom, idUsFrom, idTo, idUsTo, idTipo, fhAlta, 
+        param1, param2, param3, estado, fhProc, fhModif, URL, CuerpoLibre, AsuntoLibre) 
+        Values ('CG','ADMIN','${ EmpId }','${ Usuario }', 0, getdate(), '', '', '', 
+        'N', getdate(), getdate(), '', ${ cuerpoLibre }, ${ asuntoLibre })`
     )
 }
 
