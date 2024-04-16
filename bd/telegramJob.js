@@ -1,13 +1,12 @@
 import { enviarArchivoTelegram } from "../api/helpers/enviarArchivoTelegram.js";
 import { enviarMensajeTelegram } from "../api/helpers/enviarMensajeTelegram.js";
-import { cambiarEstadoMail, recibirCuerpoMail, recibirIdCuerpoMail, recibirListaPorEnviar, recibirListaQueNoSeEnvio } from "./bdRequests.js"
+import { cambiarEstadoMail, recibirCuerpoMail, recibirIdCuerpoMail, recibirListaPorEnviar } from "./bdRequests.js"
 import { armarCuerpoMail } from "./helpers/armarCuerpoMail.js";
 
 
 export const telegramJob = async () => {
     try {
         const results = await recibirListaPorEnviar();
-        await recibirListaQueNoSeEnvio();
 
         for( let result of results ) {
             try {
@@ -37,10 +36,8 @@ export const telegramJob = async () => {
                 let estado = seEnvioMensaje ? 'F' : 'E';
                 await cambiarEstadoMail( idMail, chat_id, estado );
                 
-                //hardcode xq no estan configurados los archivos de sql // usar URL.trim()
-                const URL2 = 'C:/Users/agustina/Desktop/Leo/M79830 - TEST - CAPSA.pdf'
-                if( URL2 != null && URL2 != '' ) {
-                    await enviarArchivoTelegram( URL2, chat_id );
+                if( URL != null && URL.trim() != '' ) {
+                    await enviarArchivoTelegram( URL, chat_id );
                 }
             } catch ( error ) {
                 console.log( error );
