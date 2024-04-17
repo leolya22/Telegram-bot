@@ -2,7 +2,7 @@ import { response } from "express";
 
 import { generarJWT } from "../helpers/generarJWT.js";
 import { generarDobleFactor } from "../helpers/generarDobleFactor.js";
-import { insertEmp, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
+import { insertEmp, insertarMailConCodigoTelegram, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
 
 
 export const crearTokenJWT = async ( req, res = response ) => {
@@ -11,7 +11,7 @@ export const crearTokenJWT = async ( req, res = response ) => {
 
     const token = await generarJWT( EmpId, Usuario );
     const dobleFactor = generarDobleFactor();
-    await insertarMailConCodigoTelegram( EmpId, Usuario, dobleFactor );
+    //await insertarMailConCodigoTelegram( EmpId, Usuario, dobleFactor );
     
     const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
     if( results[ 0 ] ) {
