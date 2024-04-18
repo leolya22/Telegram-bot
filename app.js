@@ -11,6 +11,7 @@ import { telegramJob } from './bd/telegramJob.js';
 
 crearBot();
 
+//Cada cuanto va a correr el job de telegram
 async function ejecutarJob() {
     await telegramJob();
     setTimeout( ejecutarJob, 30000 );
