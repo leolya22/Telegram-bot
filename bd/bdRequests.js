@@ -68,8 +68,7 @@ export const insertarMailConCodigoTelegram = async ( EmpId, Usuario, dobleFactor
     Usted solicito vincular su empresa en telegram para recibir las notificaciones de E-BuyPlace a su celular.
     Ya deberia tener copiado el token que tiene que enviar a nuestro <a href='${ BOT_LINK }'>bot de telegram</a>
     Para completar la vinculacion va a necesitar el siguiente codigo: <b>${ dobleFactor }</b></p><br><br>
-    <p>Si por algun motivo no se copio el token recomendamos volver al sitio y copiarlo manualmente e ingresarlo
-    en nuestro <a href='${ BOT_LINK }'>bot</a></p>`
+    <p>Si por algun motivo no se copio el token lo podes copiar con el mismo boton que lo genero</p>`
     const asuntoLibre = `Vinculacion de la empresa ${ EmpId } usuario ${ Usuario } en Telegram.`
 
     await sqlRequest(
