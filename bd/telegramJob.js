@@ -18,7 +18,7 @@ export const telegramJob = async () => {
 
                 if( CuerpoLibre != null && CuerpoLibre.trim() != '' ) {
                     asunto = AsuntoLibre;
-                    cuerpo = CuerpoLibreTrimmed;
+                    cuerpo = CuerpoLibre;
                 } else {
                     const mail = await recibirCuerpoMail( idTipo, idFrom );
                     

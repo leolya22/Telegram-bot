@@ -76,7 +76,11 @@ export const insertarMailConCodigoTelegram = async ( EmpId, Usuario, dobleFactor
         `INSERT INTO mailsEnvios (idFrom, idUsFrom, idTo, idUsTo, idTipo, fhAlta, 
         param1, param2, param3, estado, fhProc, fhModif, URL, CuerpoLibre, AsuntoLibre) 
         Values ('CG','ADMIN','${ EmpId }','${ Usuario }', 0, getdate(), '', '', '', 
-        'N', getdate(), getdate(), '', ${ cuerpoLibre }, ${ asuntoLibre })`
+        'N', getdate(), getdate(), '', @CuerpoLibre, @AsuntoLibre)`,
+        {
+            CuerpoLibre: cuerpoLibre,
+            AsuntoLibre: asuntoLibre
+        }
     )
 }
 

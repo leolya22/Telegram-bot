@@ -1,9 +1,9 @@
-import { Connection, Request } from 'tedious';
+import { Connection, Request, TYPES } from 'tedious';
 
 import { config } from '../config.js'
 
 
-export const sqlRequest = ( sqlStatement ) => {
+export const sqlRequest = ( sqlStatement, params = {} ) => {
     return new Promise( ( resolve, reject ) => {
         let results = [];
 
@@ -23,6 +23,14 @@ export const sqlRequest = ( sqlStatement ) => {
                 }
                 connection.close();
             });
+
+            for ( const key in params ) {
+                if ( params.hasOwnProperty( key )) {
+                    const param = params[ key ];
+                    request.addParameter( key, TYPES.VarChar, param );
+                }
+            }
+
             request.on( 'row', ( columns ) => {
                 let row = {};
                 columns.forEach( column => {
