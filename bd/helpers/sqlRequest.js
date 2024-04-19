@@ -1,9 +1,9 @@
-import { Connection, Request, TYPES } from 'tedious';
+import { Connection, Request } from 'tedious';
 
 import { config } from '../config.js'
 
 
-export const sqlRequest = ( sqlStatement, params = {} ) => {
+export const sqlRequest = ( sqlStatement ) => {
     return new Promise( ( resolve, reject ) => {
         let results = [];
 
@@ -23,6 +23,8 @@ export const sqlRequest = ( sqlStatement, params = {} ) => {
                 }
                 connection.close();
             });
+/* PARA RECIBIR PARAMERTOS EN LA CONSULTA DE SQL, POR AHORA NO ES NECESARIO
+NECESARIO : Importar TYPES de Tedious y recibir objeto params como argumento
 
             for ( const key in params ) {
                 if ( params.hasOwnProperty( key )) {
@@ -30,7 +32,7 @@ export const sqlRequest = ( sqlStatement, params = {} ) => {
                     request.addParameter( key, TYPES.VarChar, param );
                 }
             }
-
+*/
             request.on( 'row', ( columns ) => {
                 let row = {};
                 columns.forEach( column => {
