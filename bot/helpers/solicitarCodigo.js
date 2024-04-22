@@ -1,10 +1,13 @@
+import jwt from 'jsonwebtoken';
+
 import { selectByEmpAndChatId, vincularEmp } from "../../bd/bdRequests.js";
 
 
-export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, text, bot }) => {
+export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, token, text, bot }) => {
     try {
         const result = await selectByEmpAndChatId( EmpId, Usuario, '' );
         if( text == result[0].codigo_doble_factor ) {
+            jwt.verify( token, process.env.JWT_SECRET_WORD );
             await vincularEmp( chat_id, EmpId, Usuario, text );
             await bot.sendMessage( 
                 chat_id,
@@ -22,7 +25,12 @@ export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, text, bot }) =>
             );
             return false;
         }
-    } catch (error) {
-        console.log(error);
+    } catch ( error ) {
+        await bot.sendMessage( 
+            chat_id,
+            'No se pudo vincular la empresa. Parece que caduco el token, ' +
+            'por favor solicitar uno nuevo y repetir el proceso.'
+        );
+        return false;
     }
 }

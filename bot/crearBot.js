@@ -25,7 +25,7 @@ export const crearBot = () => {
                         'Bienvenido/a al bot de E-buyplace en Telegram. ' +
                         'Aca te vamos a enviar las notificaciones del sitio!\n' +
                         'Me podrias briandar el token para vincular tu empresa? ' +
-                        'Lo podes encontrar en el mail que te llego, junto al link de telegram!'
+                        'Lo podes copiar desde el sitio!'
                     );
                 } else {
                     const res = await recibirToken( text, chat_id, bot );
@@ -61,8 +61,7 @@ export const crearBot = () => {
                 else if ( text === '/vincular' ) {
                     await bot.sendMessage(
                         chat_id,
-                        'Me podrias briandar el token de acceso(que se envio por mail)' +
-                        ' de la empresa que queres vincular?'
+                        'Me podrias briandar el token para vincular la empresa?'
                     );
                     let token, esDobleFactor;
                     bot.off( 'message', messageListener );

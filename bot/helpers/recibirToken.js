@@ -18,12 +18,14 @@ export async function recibirToken( text, chat_id, bot ) {
             await bot.sendMessage( 
                 chat_id,
                 'Me pasas el codigo de 8 digitos para validar la vinculacion?' +
-                'Lo podes encontrar en el sitio donde solicitaste el envio del mail'
+                'Deberia haber llegado por mail.\n Recordamos que el mail puede tardar en llegar hasta 15 minutos. ' +
+                'Si no llega por favor revisar la carpeta SPAM o NO DESEADOS'
             );
             return {
                 EmpId,
                 Usuario,
-                chat_id
+                chat_id,
+                token
             }
         }
     } catch ( error ) {
