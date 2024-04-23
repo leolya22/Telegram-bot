@@ -15,17 +15,17 @@ export const selectByEmpAndChatId = async ( EmpId, Usuario, chat_id ) => {
     );
 }
 
-export const updateJWTandDobleFactor = async ( dobleFactor, EmpId, Usuario ) => {
+export const updateJWTandDobleFactor = async ( dobleFactor, EmpId, Usuario, jwt ) => {
     await sqlRequest( 
-        `update telegram_usuarios set codigo_doble_factor = '${ dobleFactor }' 
+        `update telegram_usuarios set codigo_doble_factor = '${ dobleFactor }', jwt = '${ jwt }' 
         where EmpId = '${ EmpId }' and Usuario = '${ Usuario }' and chat_id = ''`
     );
 }
 
-export const insertEmp = async ( dobleFactor, EmpId, Usuario) => {
+export const insertEmp = async ( dobleFactor, EmpId, Usuario, jwt ) => {
     await sqlRequest( 
-        `insert into telegram_usuarios ( EmpId, Usuario, chat_id, allow_telegram_notif, codigo_doble_factor )
-        Values ( '${ EmpId }', '${ Usuario }', '', 'N', '${ dobleFactor }' )`
+        `insert into telegram_usuarios ( EmpId, Usuario, chat_id, allow_telegram_notif, codigo_doble_factor, jwt )
+        Values ( '${ EmpId }', '${ Usuario }', '', 'N', '${ dobleFactor }', '${ jwt }' )`
     );
 }
 

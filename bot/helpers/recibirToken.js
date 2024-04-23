@@ -1,12 +1,11 @@
-import jwt from 'jsonwebtoken';
-
 import { selectByEmpAndChatId } from '../../bd/bdRequests.js';
+import { validarToken } from '../../api/helpers/validarToken.js';
 
 
 export async function recibirToken( text, chat_id, bot ) {
     try {
         const token = text.trim();
-        const { EmpId, Usuario } = jwt.verify( token, process.env.JWT_SECRET_WORD );
+        const { EmpId, Usuario } = validarToken( token );
         
         const result = await selectByEmpAndChatId( EmpId, Usuario, chat_id );
         if ( result[0] ) {
