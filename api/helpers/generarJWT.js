@@ -10,7 +10,7 @@ export const generarJWT = ( EmpId, Usuario ) => {
         let expirationDate = '';
         
         jwt.sign( payload, secretJWT, {
-            expiresIn: '30m'
+            expiresIn: '1m'
         }, ( error, token ) => {
             if( error ) {
                 reject( 'No se pudo generar el token' );

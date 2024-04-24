@@ -3,10 +3,10 @@ import { validarToken } from "../../api/helpers/validarToken.js"
 
 
 export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, token, text, bot }) => {
-    try {
-        const result = await selectByEmpAndChatId( EmpId, Usuario, '' );
-        if( text == result[0].codigo_doble_factor ) {
-            const { EmpId, Usuario } = validarToken( token + 'au' );
+    const result = await selectByEmpAndChatId( EmpId, Usuario, '' );
+    if( text == result[0].codigo_doble_factor ) {
+        const { ok, message, EmpId, Usuario } = await validarToken( token );
+        if( ok ) {
             await vincularEmp( chat_id, EmpId, Usuario, text );
             await bot.sendMessage( 
                 chat_id,
@@ -20,15 +20,14 @@ export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, token, text, bo
         } else {
             await bot.sendMessage( 
                 chat_id,
-                'No se pudo vincular la empresa. El codigo ingresado es incorrecto.'
+                message
             );
             return false;
         }
-    } catch ( error ) {
+    } else {
         await bot.sendMessage( 
             chat_id,
-            'No se pudo vincular la empresa. Parece que caduco el token, ' +
-            'por favor solicitar uno nuevo y repetir el proceso.'
+            'No se pudo vincular la empresa. El codigo ingresado es incorrecto.'
         );
         return false;
     }

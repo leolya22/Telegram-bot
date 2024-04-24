@@ -14,22 +14,21 @@ export const crearTokenJWT = async ( req, res = response ) => {
         const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
 
         if ( results[0] ) {
-            const { jwt } = results[0];
-            const tokenIsValid = await validarToken( jwt );
-            console.log(tokenIsValid);
+            const { codigo_doble_factor, jwt } = results[0];
+            const { ok, valid } = await validarToken( jwt );
             
-            if ( tokenIsValid ) {
+            if ( ok ) {
+                await insertarMailConCodigoTelegram( EmpId, Usuario, codigo_doble_factor );
                 return res.json({
                     ok: true,
                     EmpId,
                     Usuario,
                     token: jwt,
-                    valid: tokenIsValid
+                    valid
                 });
             }
         }
         const { token, expirationDate } = await generarJWT( EmpId, Usuario );
-        console.log(token, expirationDate);
         const dobleFactor = generarDobleFactor();
         if ( results[0] ) {
             await updateJWTandDobleFactor( dobleFactor, EmpId, Usuario, token );
@@ -43,34 +42,12 @@ export const crearTokenJWT = async ( req, res = response ) => {
             EmpId,
             Usuario,
             token,
-            expirationDate
+            valid: expirationDate
         });
     } catch ( error ) {
         return res.status( 500 ).json({
             ok: false,
-            message: 'Error al crear el token'
+            message: 'Error al crear el token. Por favor probar mas tarde!'
         });
     }
-
-/*
-    const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
-        const { jwt } = results[ 0 ];
-        const tokenIsValid = validarToken( jwt );
-        console.log( tokenIsValid );    
-    const token = await generarJWT( EmpId, Usuario );
-    const dobleFactor = generarDobleFactor();
-    await insertarMailConCodigoTelegram( EmpId, Usuario, dobleFactor );
-    
-    if( results[ 0 ] ) {
-        await updateJWTandDobleFactor( dobleFactor, EmpId, Usuario, token );
-    } else {
-        await insertEmp( dobleFactor, EmpId, Usuario, token );
-    }
-    
-    return res.json({
-        ok: true,
-        EmpId,
-        Usuario,
-        token
-    })*/
 }

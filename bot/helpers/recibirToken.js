@@ -3,10 +3,9 @@ import { validarToken } from '../../api/helpers/validarToken.js';
 
 
 export async function recibirToken( text, chat_id, bot ) {
-    try {
-        const token = text.trim();
-        const { EmpId, Usuario } = validarToken( token );
-        
+    const token = text.trim();
+    const { ok, message, EmpId, Usuario } = await validarToken( token );
+    if( ok ) {
         const result = await selectByEmpAndChatId( EmpId, Usuario, chat_id );
         if ( result[0] ) {
             await bot.sendMessage( 
@@ -27,14 +26,11 @@ export async function recibirToken( text, chat_id, bot ) {
                 token
             }
         }
-    } catch ( error ) {
+    } else {
+        console.log( ok, message);
         await bot.sendMessage( 
             chat_id,
-            ( error.message == "jwt malformed" ) 
-                ? 'El formato del token es incorrecto, revisar si lo copiaste correctamente'
-                : ( error.message == "jwt expired" ) 
-                    ? 'El token expiro, solicitar uno nuevo desde el sitio'
-                    : 'El token no es valido'
+            message
         );
         return false;
     }
