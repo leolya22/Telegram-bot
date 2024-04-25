@@ -7,7 +7,8 @@ function replaceString( plantilla, objetivo, parametro ) {
 
 function eliminarEtiquetasHTML( text ) {
     const regex = /<[^>]*>/g;
-    text = text.replace(/&nbsp;/g, ' ');
+    text = text.replace( /&nbsp;/g, '\n' );
+    text = text.replace( /&gt;/g, '>' );
     
     return text.replace( regex, '' );
 }

@@ -15,6 +15,13 @@ export const selectByEmpAndChatId = async ( EmpId, Usuario, chat_id ) => {
     );
 }
 
+export const selectByEmp = async ( EmpId, Usuario ) => {
+    return await sqlRequest( 
+        `select * from telegram_usuarios where EmpId = '${ EmpId }' 
+        and Usuario = '${ Usuario }' and chat_id <> ''`
+    );
+}
+
 export const updateJWTandDobleFactor = async ( dobleFactor, EmpId, Usuario, jwt ) => {
     await sqlRequest( 
         `update telegram_usuarios set codigo_doble_factor = '${ dobleFactor }', jwt = '${ jwt }' 

@@ -7,6 +7,7 @@ import { crearTokenJWT } from './api/controllers/crearTokenJWT.js';
 import { validarCampos } from './api/middlewares/validarCampos.js';
 import { crearBot } from './bot/crearBot.js';
 import { telegramJob } from './bd/telegramJob.js';
+import usuariosRouter from './routes/usuarios.js';
 
 
 crearBot();
@@ -31,6 +32,8 @@ app.post(
     ],
     crearTokenJWT 
 );
+app.use( '/telegram-bot/usuarios', usuariosRouter );
+
 
 app.listen( process.env.PORT, () => {
     console.log( `Servidor corriendo en el puerto ${ process.env.PORT }` );
