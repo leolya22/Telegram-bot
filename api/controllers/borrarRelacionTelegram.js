@@ -12,9 +12,9 @@ export const borrarRelacionTelegram = async ( req, res = response ) => {
     try {
         await deleteByChatIdAndEmp( chat_id, { EmpId, Usuario } );
         const razonSocial = await obtenerRazonSocial( EmpId );
-        await enviarMensajeTelegram( 'Su usuario de Telegram fue desvinculado desde el sitio para la empresa ' +
-        `${ razonSocial[ 0 ] ? razonSocial[ 0 ].nombre : EmpId } usuario ${ Usuario }!` +
-        '\nPara recibir las notificaciones va a ser necesario vincularse de nuevo', chat_id );
+        await enviarMensajeTelegram( 'Su relacion con la empresa ' +
+        `${ razonSocial[ 0 ] ? razonSocial[ 0 ].nombre : EmpId } usuario ${ Usuario } en Telegram fue borrada!` +
+        '\nPara recibir las notificaciones va a ser necesario vincularse de nuevo.', chat_id );
 
         return res.json({
             ok: true
