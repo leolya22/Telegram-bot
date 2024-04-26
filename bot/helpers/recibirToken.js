@@ -27,7 +27,6 @@ export async function recibirToken( text, chat_id, bot ) {
             }
         }
     } else {
-        console.log( ok, message);
         await bot.sendMessage( 
             chat_id,
             message
