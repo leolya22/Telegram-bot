@@ -13,6 +13,7 @@ export const recibirUsuariosTelegram = async ( req, res = response ) => {
         const usuarios = await selectByEmp( EmpId, Usuario );
         for ( const { chat_id } of usuarios ) {
             const { data } = await telegramApi.get( `/getChat?chat_id=${ chat_id }` );
+            data.result.chat_id = chat_id;
             telegramUsuarios.push( data.result );
         }
         return res.json({
@@ -20,6 +21,7 @@ export const recibirUsuariosTelegram = async ( req, res = response ) => {
             telegramUsuarios
         });
     } catch ( error ) {
+        console.log(error);
         return res.status( 400 ).json({
             ok: false,
             message: 'No se pudieron obtener los nombres de los usuarios de Telegram!'
