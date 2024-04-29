@@ -1,6 +1,6 @@
 import { enviarArchivoTelegram } from "../api/helpers/enviarArchivoTelegram.js";
 import { enviarMensajeTelegram } from "../api/helpers/enviarMensajeTelegram.js";
-import { cambiarEstadoMail, recibirCuerpoMail, recibirIdCuerpoMail, recibirListaPorEnviar } from "./bdRequests.js"
+import { cambiarEstadoMail, recibirCuerpoMail, recibirIdCuerpoMail, recibirListaPorEnviar, selectByEmpAndChatId } from "./bdRequests.js"
 import { armarCuerpoMail } from "./helpers/armarCuerpoMail.js";
 
 
@@ -10,10 +10,19 @@ export const telegramJob = async () => {
 
         for( let result of results ) {
             try {
-                const { idMail, chat_id } = result;
+                const { idMail, chat_id, idTo, idUsTo } = result;
 
                 const id = await recibirIdCuerpoMail( idMail );
-                const { idTipo, idFrom, param1, param2, param3, URL, CuerpoLibre , AsuntoLibre } = id[ 0 ];
+                const {
+                    idTipo,
+                    idFrom,
+                    param1,
+                    param2,
+                    param3,
+                    URL,
+                    CuerpoLibre,
+                    AsuntoLibre
+                } = id[ 0 ];
                 let asunto, cuerpo;
 
                 if( CuerpoLibre != null && CuerpoLibre.trim() != '' ) {
@@ -31,14 +40,20 @@ export const telegramJob = async () => {
                     cuerpo = body;
                 }
 
-                const text = armarCuerpoMail( asunto, cuerpo, { param1, param2, param3 } );
-                const seEnvioMensaje = await enviarMensajeTelegram( text, chat_id );
-                let estado = seEnvioMensaje ? 'F' : 'E';
-                await cambiarEstadoMail( idMail, chat_id, estado );
-                
-                if( URL != null && URL.trim() != '' ) {
-                    await enviarArchivoTelegram( URL, chat_id );
-                }
+                const usuarioTelegram = await selectByEmpAndChatId( idTo, idUsTo, chat_id );
+
+                if( usuarioTelegram[ 0 ]?.allow_telegram_notif.trim() === 'S' ) {
+                    const text = armarCuerpoMail( asunto, cuerpo, { param1, param2, param3 } );
+                    const seEnvioMensaje = await enviarMensajeTelegram( text, chat_id );
+                    let estado = seEnvioMensaje ? 'F' : 'E';
+                    await cambiarEstadoMail( idMail, chat_id, estado );
+                    
+                    if( URL != null && URL.trim() != '' ) {
+                        await enviarArchivoTelegram( URL, chat_id );
+                    }
+                } else {
+                    await cambiarEstadoMail( idMail, chat_id, 'I' );
+                }                
             } catch ( error ) {
                 console.log( error );
             }
