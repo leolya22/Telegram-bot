@@ -47,7 +47,7 @@ export const crearTokenJWT = async ( req, res = response ) => {
     } catch ( error ) {
         return res.status( 500 ).json({
             ok: false,
-            message: 'Error al crear el token. Por favor probar mas tarde!'
+            message: 'Error al crear el token. Por favor, inténtalo de nuevo más tarde.'
         });
     }
 }

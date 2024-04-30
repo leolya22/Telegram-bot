@@ -12,9 +12,9 @@ export const borrarRelacionTelegram = async ( req, res = response ) => {
     try {
         await deleteByChatIdAndEmp( chat_id, { EmpId, Usuario } );
         const razonSocial = await obtenerRazonSocial( EmpId );
-        await enviarMensajeTelegram( 'Su relacion con la empresa ' +
-        `${ razonSocial[ 0 ] ? razonSocial[ 0 ].nombre : EmpId } usuario ${ Usuario } en Telegram fue borrada!` +
-        '\nPara recibir las notificaciones va a ser necesario vincularse de nuevo.', chat_id );
+        await enviarMensajeTelegram( 'Se ha eliminado su relación con la empresa ' +
+        `${ razonSocial[ 0 ] ? razonSocial[ 0 ].nombre : EmpId }, usuario ${ Usuario } desde el sitio.\n` +
+        '\nPara recibir las notificaciones, será necesario vincularse nuevamente.', chat_id );
 
         return res.json({
             ok: true
@@ -22,7 +22,7 @@ export const borrarRelacionTelegram = async ( req, res = response ) => {
     } catch ( error ) {
         return res.status( 400 ).json({
             ok: false,
-            message: 'No se pudo borrar la relacion del usuario '
+            message: 'No se pudo borrar la relación del usuario.'
         });
     }
 }

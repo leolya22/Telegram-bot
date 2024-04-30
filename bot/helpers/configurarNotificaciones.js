@@ -8,8 +8,8 @@ export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id )
         } 
         await bot.sendMessage( 
             chat_id,
-            'Las notificaciones de E-buyplace estan activadas.\n\n' +
-            'Para desactivarlas es necesario correr el comando /end'
+            'Las notificaciones de E-buyplace están activadas.\n\n' +
+            'Para desactivarlas, utiliza el comando /end.'
         );
     } else {
         if ( allowNotif ) {
@@ -17,8 +17,8 @@ export const configurarNotificaciones = async ( text, allowNotif, bot, chat_id )
         } 
         await bot.sendMessage(
             chat_id,
-            'Las notificaciones de E-buyplace estan desactivadas.\n\n' +
-            'Para activarlas de nuevo es necesario correr el comando /start'
+            'Las notificaciones de E-buyplace están desactivadas.\n\n' +
+            'Para activarlas nuevamente, utiliza el comando /start.'
         );
     }
 }

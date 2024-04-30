@@ -10,11 +10,11 @@ export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, token, text, bo
             await vincularEmp( chat_id, EmpId, Usuario, text );
             await bot.sendMessage( 
                 chat_id,
-                'La empresa se vinculo correctamente\n\n' +
-                'Las notificaciones de E-buyplace estan activadas.\n' +
-                'Para desactivarlas es necesario correr el comando /end\n' +
-                'Para vincular una empresa mas podes correr el comando /vincular\n' +
-                'Para desvincular una de las empresas esta el comando /desvincular'
+                'La empresa se vinculó correctamente.\n\n' +
+                'Las notificaciones de E-buyplace están activadas.\n' +
+                'Para desactivarlas, utiliza el comando /end.\n' +
+                'Para vincular otra empresa/usuario, utiliza el comando /vincular.\n' +
+                'Para desvincular una empresa, utiliza el comando /desvincular.'
             );
             return true;
         } else {
@@ -27,7 +27,7 @@ export const solicitarCodigo = async ({ EmpId, Usuario, chat_id, token, text, bo
     } else {
         await bot.sendMessage( 
             chat_id,
-            'No se pudo vincular la empresa. El codigo ingresado es incorrecto.'
+            'No se pudo vincular la empresa. El código ingresado es incorrecto.'
         );
         return false;
     }

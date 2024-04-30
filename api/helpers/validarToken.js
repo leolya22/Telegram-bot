@@ -8,10 +8,10 @@ export const validarToken = ( token ) => {
                 resolve({
                     ok: false,
                     message: ( error.message == "jwt malformed" ) 
-                        ? 'El formato del token es incorrecto, copialo y proba de nuevo'
+                    ? 'El formato del token es incorrecto. Por favor, cópialo y pruébalo de nuevo.'
                         : ( error.message == "jwt expired" ) 
-                            ? 'El token expiro, solicitar uno nuevo desde el sitio'
-                            : 'El token no es valido'
+                            ? 'El token ha expirado. Solicita uno nuevo desde el sitio.'
+                            : 'El token no es válido.'
                 });
             } else {
                 resolve({

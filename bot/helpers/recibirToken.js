@@ -15,9 +15,10 @@ export async function recibirToken( text, chat_id, bot ) {
         } else {
             await bot.sendMessage( 
                 chat_id,
-                'Me pasas el codigo de 8 digitos para validar la vinculacion?' +
-                'Deberia haber llegado por mail.\nRecordamos que el mail puede tardar en llegar hasta 15 minutos. ' +
-                'Si no llega por favor revisar la carpeta SPAM o NO DESEADOS'
+                'Por favor, introduce el código de 8 dígitos para validar la vinculación. ' +
+                'Este código debería haber sido enviado por correo electrónico.\n' +
+                'Ten en cuenta que el correo electrónico puede tardar hasta 15 minutos en llegar. ' +
+                'Si no lo recibes, revisa la carpeta de SPAM o NO DESEADOS.'
             );
             return {
                 EmpId,

@@ -22,10 +22,10 @@ export const crearBot = () => {
                 if( text === '/start' ) {
                     await bot.sendMessage( 
                         chat_id,
-                        'Bienvenido/a al bot de E-buyplace en Telegram. ' +
-                        'Aca te vamos a enviar las notificaciones del sitio!\n' +
-                        'Me podrias briandar el token para vincular tu empresa? ' +
-                        'Lo podes copiar desde el sitio!'
+                        '¡Bienvenido/a al bot de E-buyplace en Telegram!\n' +
+                        'Aquí recibirás las notificaciones del sitio.\n' +
+                        'Por favor, ingresa el token para vincular tu empresa. ' +
+                        'Puedes generarlo desde el sitio web.'
                     );
                 } else {
                     const res = await recibirToken( text, chat_id, bot );
@@ -61,7 +61,7 @@ export const crearBot = () => {
                 else if ( text === '/vincular' ) {
                     await bot.sendMessage(
                         chat_id,
-                        'Me podrias briandar el token para vincular la empresa?'
+                        'Por favor, ingresa el token para vincular la empresa.'
                     );
                     let token, esDobleFactor;
                     bot.off( 'message', messageListener );
@@ -71,7 +71,7 @@ export const crearBot = () => {
                         if( !token ) {
                             await bot.sendMessage(
                                 chat_id,
-                                'Para vincular una empresa se necesita correr el comando /vincular de nuevo!'
+                                'Para vincular una empresa, vuelve a ejecutar el comando /vincular.'
                             );
                         }
                         if( token ) {
@@ -81,7 +81,7 @@ export const crearBot = () => {
                                 if( !esDobleFactor ) {
                                     await bot.sendMessage(
                                         chat_id,
-                                        'Para vincular una empresa se necesita correr el comando /vincular de nuevo!'
+                                        'Para vincular una empresa, vuelve a ejecutar el comando /vincular.'
                                     );
                                 };
                                 bot.on( 'message', messageListener );
@@ -98,13 +98,13 @@ export const crearBot = () => {
                         empresasVinculadas += 
                             `${ index + 1 }. ${ result.EmpId }( ${ razonSocial[ 0 ] 
                                 ? razonSocial[ 0 ].nombre 
-                                : 'No se encontro el nombre de la empresa'
+                                : 'Nombre de empresa no encontrado'
                             } ) - ${ result.Usuario }\n`;
                     }
 
                     await bot.sendMessage(
                         chat_id,
-                        'Por favor ingrese el numero de la empresa que quiere desvincular: \n\n' + 
+                        'Por favor ingresa el número de la empresa que deseas desvincular:\n\n' + 
                         empresasVinculadas
                     );
                     try {
@@ -120,13 +120,13 @@ export const crearBot = () => {
                 else {
                     await bot.sendMessage( 
                         chat_id,
-                        'Este es un bot que envia solamente las notificaciones del sitio.\n' +
-                        'Cualquier duda que tengas contactate por chat en el sitio(burbuja naranja)' +
-                        ' o a la casilla helpdesk@e-buyplace.com \n\n' +
-                        'Para activar las notificaciones es necesario correr el comando /start\n' +
-                        'Para desactivarlas - el comando /end\n' +
-                        'Si queres vincular una nueva empresa correr el comando /vincular\n' +
-                        'Para desvincular una de las empresas esta el comando /desvincular'
+                        'Este bot envía únicamente notificaciones del sitio.\n' +
+                        'Si tienes alguna pregunta, contáctanos a través del chat en el sitio web (burbuja naranja) ' +
+                        'o envía un correo electrónico a helpdesk@e-buyplace.com.\n\n' +
+                        'Para activar las notificaciones, ejecuta el comando /start.\n' +
+                        'Para desactivarlas, ejecuta el comando /end.\n' +
+                        'Si deseas vincular una nueva empresa, ejecuta el comando /vincular.\n' +
+                        'Para desvincular una empresa, utiliza el comando /desvincular.'
                     );
                 }
             }

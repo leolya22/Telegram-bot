@@ -25,16 +25,16 @@ export const enviarArchivoTelegram = async ( filePath, chat_id ) => {
             });
             return true;
         } catch ( error ) {
-            await enviarMensajeTelegram( 
-                'No se pudo enviar el archivo,' +
-                ' por favor descargarlo desde el sitio. Puede ser que aun no este disponible.',
+            await enviarMensajeTelegram(
+                'No se pudo enviar el archivo. Por favor, descárgalo desde el sitio. ' +
+                'Puede que aún no esté disponible.',
                 chat_id
             )
         }
     } else {
-        await enviarMensajeTelegram( 
-            'No se pudo enviar el archivo,' +
-            ' por favor descargarlo desde el sitio. Puede ser que aun no este disponible.',
+        await enviarMensajeTelegram(
+            'No se pudo enviar el archivo. Por favor, descárgalo desde el sitio. ' +
+            'Puede que aún no esté disponible.',
             chat_id
         )
     }
