@@ -8,7 +8,7 @@ export const validarToken = ( token ) => {
                 resolve({
                     ok: false,
                     message: ( error.message == "jwt malformed" ) 
-                    ? 'El formato del token es incorrecto. Por favor, cópialo y pruébalo de nuevo.'
+                    ? 'El formato del token es incorrecto. Por favor, copialo desde el sitio y proba de nuevo.'
                         : ( error.message == "jwt expired" ) 
                             ? 'El token ha expirado. Solicita uno nuevo desde el sitio.'
                             : 'El token no es válido.'
