@@ -14,7 +14,7 @@ export const desvincularEmpresa = async ( msg, chat_id, results, bot ) => {
                 await bot.sendMessage(
                     chat_id,
                     'Actualmente no tienes empresas vinculadas.\n' +
-                    'Para vincular una empresa, necesitas enviar el token, el cual puedes generar desde el sitio.'
+                    'Para vincular una empresa, necesitas enviar el token, lo podes generar desde el sitio.'
                 );
             }
         } else {
