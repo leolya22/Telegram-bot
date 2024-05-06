@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import { deleteByChatIdAndEmp, obtenerRazonSocial } from "../../bd/bdRequests.js";
+import { deleteByChatIdAndEmp, obtenerRazonSocial, selectAllByChatId } from "../../bd/bdRequests.js";
 import { enviarMensajeTelegram } from "../helpers/enviarMensajeTelegram.js";
 
 
@@ -15,6 +15,13 @@ export const borrarRelacionTelegram = async ( req, res = response ) => {
         await enviarMensajeTelegram( 'Se ha eliminado su relación con la empresa ' +
         `${ razonSocial[ 0 ] ? razonSocial[ 0 ].nombre : EmpId }, usuario ${ Usuario } desde el sitio.\n` +
         '\nPara recibir las notificaciones, será necesario vincularse nuevamente.', chat_id );
+        const results = await selectAllByChatId( chat_id );
+        if( !results[ 0 ] ) {
+            await enviarMensajeTelegram( 
+                'Actualmente no tienes empresas vinculadas.\nPara vincular una empresa' +
+                ', necesitas enviar el token, lo podes generar desde el sitio.', chat_id
+            )
+        }
 
         return res.json({
             ok: true
