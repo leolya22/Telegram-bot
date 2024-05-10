@@ -10,6 +10,8 @@ function eliminarEtiquetasHTML( text ) {
     text = text.replace( /&nbsp;/g, ' ' );
     text = text.replace( /<br>/gi, '\n' );
     text = text.replace( /<br \/>/gi, '\n' );
+    text = text.replace( /<br\/>/gi, '\n' );
+    text = text.replace( /<\/DIV>/gi, '\n' );
     text = text.replace( /&gt;/g, '>' );
     
     return text.replace( regex, '' );
