@@ -1,5 +1,5 @@
 function replaceString( plantilla, objetivo, parametro ) {
-    const regex = new RegExp( objetivo, 'i' );
+    const regex = new RegExp( objetivo, 'gi' );
     const resultado = plantilla.replace( regex, parametro );
     
     return resultado;
@@ -7,7 +7,8 @@ function replaceString( plantilla, objetivo, parametro ) {
 
 function eliminarEtiquetasHTML( text ) {
     const regex = /<[^>]*>/g;
-    text = text.replace( /&nbsp;/g, '\n' );
+    text = text.replace( /&nbsp;/g, ' ' );
+    text = text.replace( /<br>/gi, '\n' );
     text = text.replace( /&gt;/g, '>' );
     
     return text.replace( regex, '' );
