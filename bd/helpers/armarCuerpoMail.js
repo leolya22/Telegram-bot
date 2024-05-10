@@ -9,6 +9,7 @@ function eliminarEtiquetasHTML( text ) {
     const regex = /<[^>]*>/g;
     text = text.replace( /&nbsp;/g, ' ' );
     text = text.replace( /<br>/gi, '\n' );
+    text = text.replace( /<br \/>/gi, '\n' );
     text = text.replace( /&gt;/g, '>' );
     
     return text.replace( regex, '' );
