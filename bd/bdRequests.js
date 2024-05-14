@@ -68,11 +68,11 @@ export const obtenerRazonSocial = async ( EmpId ) => {
     )
 }
 
-export const insertarMailConCodigoTelegram = async ( EmpId, Usuario, dobleFactor ) => {
+export const insertarMailConCodigoTelegram = async ( nombre, EmpId, Usuario, dobleFactor ) => {
     await sqlRequest(
         `INSERT INTO mailsEnvios (idFrom, idUsFrom, idTo, idUsTo, idTipo, fhAlta, 
         param1, param2, param3, estado, fhProc, fhModif, URL, CuerpoLibre, AsuntoLibre) 
-        Values ('CG','ADMIN','${ EmpId }','${ Usuario }', 888, getdate(), '${ EmpId }', 
+        Values ('CG','ADMIN','${ EmpId }','${ Usuario }', 888, getdate(), '${ nombre }', 
         '${ Usuario }', '${ dobleFactor }', 'N', getdate(), getdate(), '', '', '')`
     )
 }

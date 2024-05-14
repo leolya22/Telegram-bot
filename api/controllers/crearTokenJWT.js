@@ -2,7 +2,7 @@ import { response } from "express";
 
 import { generarJWT } from "../helpers/generarJWT.js";
 import { generarDobleFactor } from "../helpers/generarDobleFactor.js";
-import { insertEmp, insertarMailConCodigoTelegram, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
+import { insertEmp, insertarMailConCodigoTelegram, obtenerRazonSocial, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
 import { validarToken } from "../helpers/validarToken.js";
 
 
@@ -12,13 +12,15 @@ export const crearTokenJWT = async ( req, res = response ) => {
     
     try {
         const results = await selectByEmpAndChatId( EmpId, Usuario, '' );
+        const razonSocial = await obtenerRazonSocial( EmpId );
+        const nombre = razonSocial[ 0 ]?.nombre || EmpId;
 
         if ( results[0] ) {
             const { codigo_doble_factor, jwt } = results[0];
             const { ok, valid } = await validarToken( jwt );
             
             if ( ok ) {
-                await insertarMailConCodigoTelegram( EmpId, Usuario, codigo_doble_factor );
+                await insertarMailConCodigoTelegram( nombre, EmpId, Usuario, codigo_doble_factor );
                 return res.json({
                     ok: true,
                     EmpId,
@@ -35,7 +37,7 @@ export const crearTokenJWT = async ( req, res = response ) => {
         } else {
             await insertEmp( dobleFactor, EmpId, Usuario, token );
         }
-        await insertarMailConCodigoTelegram( EmpId, Usuario, dobleFactor );
+        await insertarMailConCodigoTelegram( nombre, EmpId, Usuario, dobleFactor );
 
         return res.json({
             ok: true,
