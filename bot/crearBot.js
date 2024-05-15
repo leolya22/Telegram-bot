@@ -109,8 +109,8 @@ export const crearBot = () => {
                     );
                     try {
                         bot.off( 'message', messageListener );
-                        bot.once( 'message', ( msg ) => {
-                            desvincularEmpresa( msg, chat_id, results, bot )
+                        bot.once( 'message', async ( msg ) => {
+                            await desvincularEmpresa( msg, chat_id, results, bot );
                             bot.on( 'message', messageListener );
                         });
                     } catch ( error ) {

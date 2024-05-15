@@ -2,7 +2,10 @@ import { response } from "express";
 
 import { generarJWT } from "../helpers/generarJWT.js";
 import { generarDobleFactor } from "../helpers/generarDobleFactor.js";
-import { insertEmp, insertarMailConCodigoTelegram, obtenerRazonSocial, selectByEmpAndChatId, updateJWTandDobleFactor } from "../../bd/bdRequests.js";
+import {
+    insertEmp, insertarMailConCodigoTelegram, obtenerRazonSocial,
+    selectByEmpAndChatId, updateJWTandDobleFactor
+} from "../../bd/bdRequests.js";
 import { validarToken } from "../helpers/validarToken.js";
 
 

@@ -21,7 +21,6 @@ export const recibirUsuariosTelegram = async ( req, res = response ) => {
             telegramUsuarios
         });
     } catch ( error ) {
-        console.log(error);
         return res.status( 400 ).json({
             ok: false,
             message: 'No se pudieron obtener los nombres de los usuarios de Telegram.'

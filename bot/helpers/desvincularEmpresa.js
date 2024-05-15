@@ -25,6 +25,10 @@ export const desvincularEmpresa = async ( msg, chat_id, results, bot ) => {
             );
         }
     } catch ( error ) {
-        console.log( error );
+        await bot.sendMessage(
+            chat_id,
+            'Ocurrio un error inesperado.\n' +
+            'Es necesario ejecutar el comando /desvincular nuevamente.'
+        );
     }
 }

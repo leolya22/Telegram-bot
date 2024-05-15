@@ -17,7 +17,7 @@ export const borrarRelacionTelegram = async ( req, res = response ) => {
         '\nPara recibir las notificaciones, será necesario vincularse nuevamente.', chat_id );
         const results = await selectAllByChatId( chat_id );
         if( !results[ 0 ] ) {
-            await enviarMensajeTelegram( 
+            await enviarMensajeTelegram(
                 'Actualmente no tienes empresas vinculadas.\nPara vincular una empresa' +
                 ', necesitas enviar el token, lo podes generar desde el sitio.', chat_id
             )
