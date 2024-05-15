@@ -139,7 +139,7 @@ export const crearBot = () => {
         { command: '/start', description: 'Activar las notificaciones' },
         { command: '/end', description: 'Desactivar las notificaciones' },
         { command: '/vincular', description: 'Vincular una nueva empresa' },
-        { command: '/desvincular', description: 'Desvincular una empresa'}
+        { command: '/desvincular', description: 'Desvincular una empresa' }
     ]);
     bot.on( 'message', messageListener );
 }
