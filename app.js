@@ -10,7 +10,7 @@ import tokenRouter from './routes/token.js';
 
 crearBot();
 
-//Cada cuantos ms va a correr el job de telegram
+//Cada cuantos ms va a consultar las notificaciones pendientes de enviar
 async function ejecutarJob() {
     await telegramJob();
     setTimeout( ejecutarJob, 30000 );
